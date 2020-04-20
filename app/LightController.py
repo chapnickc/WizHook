@@ -42,6 +42,7 @@ def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable
     get_current_segment = make_get_current('segments')
     get_current_section = make_get_current('sections')
     get_current_beat = make_get_current('beats')
+    get_current_bar = make_get_current('bars')
 
     def make_scale(name):
         xs = [x[name] for x in analysis['sections']]
@@ -56,7 +57,10 @@ def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable
         segment = get_current_segment(t)
         section = get_current_section(t)
         beat = get_current_beat(t)
+        bar = get_current_bar(t)
 
+
+        bar_color = config.BASE_MULIPLIER * (t - bar['start'] + bar['duration']) / bar['duration']
         beat_color = config.BEAT_MULTIPLIER * (t - beat['start'] + beat['duration']) / beat['duration']
         tempo_color = config.TEMPO_MULTIPLIER * scale_tempo(section['tempo'])
         pitch_colors = [config.PITCH_MULITPLIER * p for p in segment['pitches']]
@@ -71,17 +75,19 @@ def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable
             for n in range(leds)
         )
 
-        logging.info(f"mode={section['mode']}")
-        if section['mode'] == 0:
+        if section['mode'] == 0 or True:
             order = (0, 1, 2)
         elif section['mode'] == 1:
-            order = (2, 1, 0)
+            # order = (2, 0, 1)
+            order = (2, 1, 1)
         else:
-            order = (1, 2, 0)
+            order = (2, 1, 0)
 
         ordered_colors = ((color[order[0]], color[order[1]], color[order[2]]) for color in colors)
-
-        return [_scale_pixel(color) for color in ordered_colors]
+        ret = [_scale_pixel(color) for color in ordered_colors]
+        for i in range(len(config.LED_IPS)):
+            logging.info(f'IP={config.LED_IPS[i]} mode={section["mode"]} Color={ret[i]}')
+        return  ret
 
     return get_current_colors
 
@@ -114,8 +120,8 @@ async def _events_to_colors(leds: int, event_queue: asyncio.Queue[Event]) -> Asy
 
 async def send_to_device(colors: Colors) -> None:
     if len(colors) != len(config.LED_IPS): return
-    for i in range(len(config.LED_IPS)):
-        logging.info(f'IP={config.LED_IPS[i]} Color={colors[i]}')
+    #for i in range(len(config.LED_IPS)):
+        #logging.info(f'IP={config.LED_IPS[i]} Color={colors[i]}')
     ops = [wizlight(config.LED_IPS[i]).turn_on(PilotBuilder(rgb=colors[i])) for i in range(len(config.LED_IPS))]
     loop = asyncio.get_event_loop()
     await asyncio.gather(*ops, loop=loop)

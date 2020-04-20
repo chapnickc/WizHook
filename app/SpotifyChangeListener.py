@@ -35,15 +35,15 @@ async def _listen_for_events(session) -> AsyncIterable[Event]:
         current = await _get_current_playing(session)
         if not current['is_playing']:
             current_id = None
-            logging.info(f'Stop Event')
+            logging.debug(f'Stop Event')
             yield EventStop()
         elif current['item']['id'] != current_id:
             current_id = current['item']['id']
             analysis = await _get_audio_analysis(session, current_id)
-            logging.info(f'Retrieved analysis for time={request_time}, id={current_id}')
+            logging.debug(f'Retrieved analysis for time={request_time}, id={current_id}')
             yield EventSongChanged(analysis, _get_start_time(current, request_time))
         else:
-            logging.info(f'Adjusting start time {request_time}')
+            logging.debug(f'Adjusting start time {request_time}')
             yield EventAdjustStartTime(_get_start_time(current, request_time))
         await asyncio.sleep(config.SPOTIFY_CHANGES_LISTENER_DEALY)
 
