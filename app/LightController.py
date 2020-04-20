@@ -19,7 +19,7 @@ import random
 
 def _normalize(pv: float) -> float:
     if pv < 0:
-        return 1.
+        return 0.
     elif pv > 255:
         return 255.
     else:
@@ -31,7 +31,7 @@ def _scale_pixel(p):
             int(_normalize(p[2]) * config.SCALE[2] / 255))
 
 def get_empty_colors(leds: int) -> Colors:
-    return [(128, 128, 0)] * leds
+    return [(255, 90, 0)] * leds
 
 def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable[[float], Colors]:
     def make_get_current(name):
@@ -57,11 +57,9 @@ def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable
         section = get_current_section(t)
         beat = get_current_beat(t)
 
-        beat_color = config.BASE_COLOR_MULTIPLIER * (t - beat['start'] + beat['duration']) / beat['duration']
-
-        tempo_color = config.BASE_COLOR_MULTIPLIER * scale_tempo(section['tempo'])
-
-        pitch_colors = [config.BASE_COLOR_MULTIPLIER * p for p in segment['pitches']]
+        beat_color = config.BEAT_MULTIPLIER * (t - beat['start'] + beat['duration']) / beat['duration']
+        tempo_color = config.TEMPO_MULTIPLIER * scale_tempo(section['tempo'])
+        pitch_colors = [config.PITCH_MULITPLIER * p for p in segment['pitches']]
 
         loudness_multiplier = 1 + config.LOUDNESS_MULTIPLIER * scale_loudness(section['loudness'])
 
@@ -69,6 +67,7 @@ def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable
             (beat_color * loudness_multiplier,
             tempo_color * loudness_multiplier,
             pitch_colors[0] * loudness_multiplier)
+            # pitch_colors[n % len(pitch_colors)] * loudness_multiplier)
             for n in range(leds)
         )
 
@@ -76,11 +75,9 @@ def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable
         if section['mode'] == 0:
             order = (0, 1, 2)
         elif section['mode'] == 1:
-            # order = (1, 2, 0)
             order = (2, 1, 0)
         else:
             order = (1, 2, 0)
-            # order = (2, 1, 0)
 
         ordered_colors = ((color[order[0]], color[order[1]], color[order[2]]) for color in colors)
 

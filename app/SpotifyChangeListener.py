@@ -26,7 +26,7 @@ async def _get_audio_analysis(session: aiohttp.ClientSession, id: str) -> RawSpo
 
 def _get_start_time(current_playing, request_time: float) -> float:
     # spotify timestamp appears to be incorrect https://github.com/spotify/web-api/issues/640
-    return (request_time + time.time()) / 2 - current_playing['progress_ms'] / 1000
+    return (request_time + time.time()) / 2 - (current_playing['progress_ms'] / 1000)  + config.OFFSET
 
 async def _listen_for_events(session) -> AsyncIterable[Event]:
     current_id = None
