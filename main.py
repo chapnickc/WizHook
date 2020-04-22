@@ -1,9 +1,6 @@
 import asyncio
 from app import SpotifyChangeListener, LightController
 
-import logging
-logging.getLogger().setLevel(logging.INFO)
-
 
 def main():
     async def _main():

@@ -75,11 +75,27 @@ def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable
             if config.MODE == 1:
                 h = 0.75*tempo_color
             elif config.MODE == 2:
-                h = 0.75*tempo_color + -0.2*math.log(bar_color%1, 10);
+                h = 0.75*tempo_color + -0.03*math.log(bar_color%1, 10)
             elif config.MODE == 3:
-                h = 0.75*tempo_color + -0.03*math.log(bar_color%1, 10);
+                h = 0.75*tempo_color + -0.2*math.log(bar_color%1, 10)
+            elif config.MODE == 4:
+                h = 0.75*tempo_color + 0.25*pitch_colors[0] + 0.25*(bar_color%1)
+            elif config.MODE == 'banana':
+                #h = 0.8*tempo_color - 0.1*math.log(beat_color%1, 10) - 0.2*math.log(pitch_colors[0]) - 0.1*math.log(bar_color%1, 10)
+                h = (0.76*tempo_color 
+                    - 0.14*math.log(pitch_colors[0]) 
+                    - 0.05*math.log(timbre_colors[0], 10)
+                )
             else:
-                h = 0.75*tempo_color + 0.25*pitch_colors[0] + 0.25*(bar_color%1);
+                parts = [ 
+                        0.5*tempo_color,
+                        -0.3*math.log(bar_color%1, 10)
+                        #0.3*(beat_color%1),
+                        #0.5*pitch_colors[n],
+                    ]
+
+                h = sum(parts)
+                print(h, parts)
 
             if not 0 < h <= 1: h = 1
             if not 0 < s <= 1: s = 1

@@ -1,3 +1,5 @@
+import logging; logging.getLogger().setLevel(logging.ERROR)
+
 import os
 
 API_CURRENT_PLAYING = 'https://api.spotify.com/v1/me/player/currently-playing'
@@ -8,7 +10,7 @@ SPOTIFY_CHANGES_LISTENER_FAILURE_DELAY = 1
 SPOTIFY_USERNAME=os.getenv('SPOTIPY_USERNAME')
 
 LED_IPS = [
-    #"192.168.0.18",
+    "192.168.0.18",
     "192.168.0.17",
     "192.168.0.19",
 ]
@@ -31,4 +33,6 @@ OFFSET = 0
 BASE_LIGHTNESS=0.7
 LOUDNESS_MULTIPLIER = 1.3
 
-MODE = 3
+MODE = 4
+
+
