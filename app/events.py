@@ -3,7 +3,6 @@ from typing import Dict, Any, Union, List, Tuple
 
 RawSpotifyResponse = Dict[str, Any]
 
-
 @dataclass
 class EventSongChanged:
     analysis: RawSpotifyResponse
