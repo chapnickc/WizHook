@@ -15,6 +15,7 @@ import time
 import logging
 import random
 import colorsys
+import math
 
 
 def _normalize(pv: float) -> float:
@@ -70,19 +71,22 @@ def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable
 
         colors = []
         for n in range(leds):
-            # h = 0.9*tempo_color +0.1*pitch_colors[0]
-            #h = 0.9*tempo_color +0.1*pitch_colors[0]
-            #if h > 1: h = 1
-            #h = 0.5*tempo_color + 0.5*(beat_color-int(beat_color))
-            #h = 0.8*tempo_color +  0.2*pitch_colors[0];
+            s, v = 1 ,1
+            if config.MODE == 1:
+                h = 0.75*tempo_color
+            elif config.MODE == 2:
+                h = 0.75*tempo_color + -0.2*math.log(bar_color%1, 10);
+            elif config.MODE == 3:
+                h = 0.75*tempo_color + -0.05*math.log(bar_color%1, 10);
+            else:
+                h = 0.75*tempo_color + 0.25*pitch_colors[0] + 0.25*(bar_color%1);
 
-           # if section['mode'] == 0:
-           #     h = 0.90*tempo_color + 0.10*pitch_colors[0];
-            h = 0.75*tempo_color + 0.25*pitch_colors[0] + 0.25*(bar_color%1);
-            rgb = colorsys.hsv_to_rgb(h, 1, 1)
+            if not 0 < h <= 1: h = 1
+            if not 0 < s <= 1: s = 1
+            if not 0 < v <= 1: v = 1
+            rgb = colorsys.hsv_to_rgb(h, s, v)
             colors.append(_scale_pixel([255*p for p in rgb]))
 
-        #colors = ((beat_color * loudness_multiplier,
         #    tempo_color * loudness_multiplier, #    pitch_colors[0] * loudness_multiplier) #    for n in range(leds))
         #if section['mode'] == 0 or True:
         order = (0, 1, 2)
