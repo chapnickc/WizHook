@@ -75,7 +75,10 @@ def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable
             #if h > 1: h = 1
             #h = 0.5*tempo_color + 0.5*(beat_color-int(beat_color))
             #h = 0.8*tempo_color +  0.2*pitch_colors[0];
-            h = 0.75*tempo_color +  0.25*pitch_colors[0];
+
+           # if section['mode'] == 0:
+           #     h = 0.90*tempo_color + 0.10*pitch_colors[0];
+            h = 0.75*tempo_color + 0.25*pitch_colors[0] + 0.25*(bar_color%1);
             rgb = colorsys.hsv_to_rgb(h, 1, 1)
             colors.append(_scale_pixel([255*p for p in rgb]))
 
@@ -112,7 +115,7 @@ async def _events_to_colors(leds: int, event_queue: asyncio.Queue[Event]) -> Asy
         elif isinstance(event, EventAdjustStartTime):
             start_time = event.start_time
         elif isinstance(event, EventStop):
-            pass
+            get_current_colors = None
 
         if get_current_colors is None:
             yield get_empty_colors(leds)
