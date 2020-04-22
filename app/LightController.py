@@ -77,7 +77,7 @@ def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable
             elif config.MODE == 2:
                 h = 0.75*tempo_color + -0.2*math.log(bar_color%1, 10);
             elif config.MODE == 3:
-                h = 0.75*tempo_color + -0.05*math.log(bar_color%1, 10);
+                h = 0.75*tempo_color + -0.03*math.log(bar_color%1, 10);
             else:
                 h = 0.75*tempo_color + 0.25*pitch_colors[0] + 0.25*(bar_color%1);
 
