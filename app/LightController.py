@@ -34,25 +34,26 @@ def _scale_pixel(p):
 def get_empty_colors(leds: int) -> Colors:
     return [(255, 90, 0)] * leds
 
+def make_get_current(analysis, name):
+    keys = [x['start'] for x in analysis[name]]
+    key_to_x = {x['start']: x for x in analysis[name]}
+    return lambda t: key_to_x[keys[bisect_left(keys, t) - 1]]
+
+
+def make_scale(analysis, name):
+    xs = [x[name] for x in analysis['sections']]
+    min_xs = min(xs)
+    max_xs = max(xs)
+    return lambda x: (x - min_xs) / (max_xs - min_xs)
+
 def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable[[float], Colors]:
-    def make_get_current(name):
-        keys = [x['start'] for x in analysis[name]]
-        key_to_x = {x['start']: x for x in analysis[name]}
-        return lambda t: key_to_x[keys[bisect_left(keys, t) - 1]]
+    get_current_segment = make_get_current(analysis, 'segments')
+    get_current_section = make_get_current(analysis, 'sections')
+    get_current_beat = make_get_current(analysis, 'beats')
+    get_current_bar = make_get_current(analysis, 'bars')
 
-    get_current_segment = make_get_current('segments')
-    get_current_section = make_get_current('sections')
-    get_current_beat = make_get_current('beats')
-    get_current_bar = make_get_current('bars')
-
-    def make_scale(name):
-        xs = [x[name] for x in analysis['sections']]
-        min_xs = min(xs)
-        max_xs = max(xs)
-        return lambda x: (x - min_xs) / (max_xs - min_xs)
-
-    scale_loudness = make_scale('loudness')
-    scale_tempo = make_scale('tempo')
+    scale_loudness = make_scale(analysis, 'loudness')
+    scale_tempo = make_scale(analysis, 'tempo')
 
     def get_current_colors(t):
         segment = get_current_segment(t)
@@ -71,15 +72,28 @@ def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable
 
         colors = []
         for n in range(leds):
-            s, v = 1 ,1
             if config.MODE == 1:
                 h = 0.75*tempo_color
             elif config.MODE == 2:
                 h = 0.75*tempo_color + -0.03*math.log(bar_color%1, 10)
             elif config.MODE == 3:
-                h = 0.75*tempo_color + -0.2*math.log(bar_color%1, 10)
+                h = 0.75*tempo_color + -0.06*math.log(bar_color%1, 10)
             elif config.MODE == 4:
+                h = 0.75*tempo_color + -0.2*math.log(bar_color%1, 10)
+            elif config.MODE == 5:
                 h = 0.75*tempo_color + 0.25*pitch_colors[0] + 0.25*(bar_color%1)
+            elif config.MODE == 6:
+                parts = [
+                    0.5*tempo_color,
+                    0.01*(bar_color%1),
+                    0.05*math.log10(pitch_colors[1]),
+                    0.1*(bar_color - math.trunc(bar_color)),
+                    -0.01*(beat_color - math.trunc(beat_color)),
+                ]
+                h = sum(parts)
+                print(h, parts)
+
+
             elif config.MODE == 'banana':
                 #h = 0.8*tempo_color - 0.1*math.log(beat_color%1, 10) - 0.2*math.log(pitch_colors[0]) - 0.1*math.log(bar_color%1, 10)
                 h = (0.76*tempo_color 
@@ -93,13 +107,11 @@ def make_get_current_colors(analysis: RawSpotifyResponse, leds: int) -> Callable
                         #0.3*(beat_color%1),
                         #0.5*pitch_colors[n],
                     ]
-
                 h = sum(parts)
                 print(h, parts)
 
             if not 0 < h <= 1: h = 1
-            if not 0 < s <= 1: s = 1
-            if not 0 < v <= 1: v = 1
+            s = v =1
             rgb = colorsys.hsv_to_rgb(h, s, v)
             colors.append(_scale_pixel([255*p for p in rgb]))
 

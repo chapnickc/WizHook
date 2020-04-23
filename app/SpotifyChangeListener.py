@@ -58,9 +58,10 @@ class SpotifyChangeListener:
             await asyncio.sleep(config.SPOTIFY_CHANGES_LISTENER_DEALY)
 
     async def listen(self):
+        await self.get_new_token()
         while True:
-            await self.get_new_token()
             async with aiohttp.ClientSession(headers=self.headers) as session:
+                await self.get_new_token()
                 try:
                     async for event in self._listen_for_events(session):
                         await self.queue.put(event)
