@@ -32,6 +32,8 @@ def current_interval_factory(analysis, name):
     return lambda t: key_to_x[keys[bisect_left(keys, t) - 1]]
 
 def section_scale_factory(analysis, name):
+    if not analysis.get('sections'):
+        return lambda x: 0.5
     items = [section[name] for section in analysis['sections']
              if name in section]
     min_ = min(items)
@@ -64,18 +66,22 @@ class AnalysisHelper:
         tempo = self.scale_section_tempo(section.get('tempo', -1))
         key = self.scale_section_key(section.get('key', -1))
 
-        current_bar = (t - bar['start'] + bar['duration']) / bar['duration']
-        current_beat = (t - beat['start'] + beat['duration']) / beat['duration']
+        current = lambda x, t: (t - x['start'] + x['duration']) / x['duration']
+
+        current_bar = current(bar, t)
+        current_beat = current(beat, t)
+        current_tatum = current(tatum, t)
         #beat_color = (t - beat['start'] + beat['duration']) / beat['duration']
-        #timbre_colors = [p for p in segment['timbre']]
+        timbre_colors = [p for p in segment['timbre']]
         #pitch_colors = [p for p in segment['pitches']]
+
         parts = {
-                't': 0.2*tempo,
-                #'p': 0.1*math.exp(segment['pitches'][0]) -0.1,
-                #'bar': -0.2*math.log10(current_bar%1),
-                #'beat': -0.1*math.log10(current_beat%1)
-                'beat': -0.05*math.log(current_beat%1)
-                }
+                'tempo': 0.3*tempo,
+                #'tatum': -0.01*math.log(current_tatum%1),
+                #'beat': -0.05*math.log(current_beat%1),
+                'beat': -0.05*(current_beat - math.trunc(current_beat)),
+                #'bar': -0.02*math.log(current_bar%1),
+            }
         parts['sum'] = sum(parts.values())
         return parts
 
