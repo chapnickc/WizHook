@@ -16,7 +16,7 @@ def _normalize(pv: float) -> float:
         return pv
 
 def _scale_pixel(p):
-    return tuple( int(_normalize(p[i])) * config.SCALE[i]/255
+    return tuple( int(int(_normalize(p[i])) * config.SCALE[i]/255)
             for i in range(len(p)) )
 
 def current_interval_factory(analysis, name):
@@ -39,7 +39,7 @@ def section_scale_factory(analysis, name):
     return lambda x: (x - min_) / (max_ - min_)
 
 class AnalysisHelper:
-    def __init__(self, analysis, led_count):
+    def __init__(self, analysis, led_count=1):
         self.led_count = led_count
         # vary with time
         self.get_current_beat = current_interval_factory(analysis, 'beats')
@@ -71,10 +71,12 @@ class AnalysisHelper:
         #pitch_colors = [p for p in segment['pitches']]
         parts = {
                 't': 0.2*tempo,
-                'p': -0.15*segment['pitches'][0],
-                'bar': 0.2*current_bar,
-                'beat': 0.1*math.log10(current_beat%1)
+                #'p': 0.1*math.exp(segment['pitches'][0]) -0.1,
+                #'bar': -0.2*math.log10(current_bar%1),
+                #'beat': -0.1*math.log10(current_beat%1)
+                'beat': -0.05*math.log(current_beat%1)
                 }
+        parts['sum'] = sum(parts.values())
         return parts
 
     def get_current_colors(self, t):
