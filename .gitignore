@@ -6,3 +6,4 @@ env.sh
 example.py
 explore.py
 test.py
+*.ipynb_checkpoints
