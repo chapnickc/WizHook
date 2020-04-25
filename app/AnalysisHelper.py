@@ -71,16 +71,15 @@ class AnalysisHelper:
         current_bar = current(bar, t)
         current_beat = current(beat, t)
         current_tatum = current(tatum, t)
-        #beat_color = (t - beat['start'] + beat['duration']) / beat['duration']
         timbre_colors = [p for p in segment['timbre']]
-        #pitch_colors = [p for p in segment['pitches']]
+        pitch_colors = [p for p in segment['pitches']]
 
         parts = {
-                'tempo': 0.3*tempo,
+                'tempo': 0.15*math.exp(tempo)*math.exp(loudness),
                 #'tatum': -0.01*math.log(current_tatum%1),
-                #'beat': -0.05*math.log(current_beat%1),
-                'beat': -0.05*(current_beat - math.trunc(current_beat)),
-                #'bar': -0.02*math.log(current_bar%1),
+                'beat': -0.1*(current_beat - math.trunc(current_beat)),
+                'bar': -0.02*math.log(current_bar%1),
+                #'pitch': -0.01*math.exp(pitch_colors[0]),
             }
         parts['sum'] = sum(parts.values())
         return parts
