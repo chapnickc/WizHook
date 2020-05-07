@@ -75,11 +75,12 @@ class AnalysisHelper:
         pitch_colors = [p for p in segment['pitches']]
 
         parts = {
-                'tempo': 0.15*math.exp(tempo)*math.exp(loudness),
+                #'tempo': 0.1*math.exp(tempo)*math.exp(1.2*loudness),
+                'tempo': 0.1*math.exp(tempo)*math.exp(1.6*loudness) - 0.1,
                 #'tatum': -0.01*math.log(current_tatum%1),
                 #'beat': -0.1*(current_beat - math.trunc(current_beat)),
                 #'bar': -0.02*math.log(current_bar%1),
-                'pitch': -0.02*math.exp(pitch_colors[0]),
+                'pitch': 0.075*math.exp(pitch_colors[0]),
             }
         parts['sum'] = sum(parts.values())
         return parts
