@@ -1,6 +1,7 @@
 
 # WizHook
 
+![](notebooks/ravel_example.png?raw=true)
 
 Welcome! I'm glad you found the project. 
 
@@ -11,8 +12,7 @@ To get started, you will need a few things:
 * [Spotify Developer Account](https://developer.spotify.com/dashboard)
 * [Python 3](https://docs.python-guide.org/starting/install3/osx/)
 * Git (Optional, see below)
-* MacOS / UNIX OS
-* Patience (no link)
+* MacOS / UNIX
 
 ### Spotify Developer Account
 
@@ -31,8 +31,9 @@ Client Secret xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 Keep a note of these.
 
-Lastly, edit the app settings. In the "Redirect URIs" add http://0.0.0.0:8888/.
-More on this later.
+Lastly, edit the app settings. In the "Redirect URIs" add `http://0.0.0.0:8888/`.
+Note that the trailing `/` is important. 
+This is for the authentication process.
 
 ### Python 3 
 
@@ -42,16 +43,23 @@ To install Python 3, follow the instructions [here](https://docs.python-guide.or
 
 ### Git
 
+The source code is publically available on GitHub. 
+You can download the repository from the command line using `git`,
+or you can download a zip archive 
+[here](https://github.com/chapnickc/WizHook/archive/master.zip).
+
 If you don't have git installed, you can install it with homebrew.
 
 ```sh
-brew install git
+$ brew install git
 ```
+
 -------------------
 
 ## Getting Started
 
-Get the source code:
+Navigate to the WizHook directory
+
 ```sh
 $ git clone http://github.com/chapnickc/WizHook
 $ cd WizHook
@@ -102,8 +110,9 @@ To stop the script type Ctrl-C.
 
 ----------------------
 
-Helpful:
+### References
 
-[https://github.com/sbidy/wiz_light/blob/master/test.py](https://github.com/sbidy/wiz_light/blob/master/test.py)
+* [Sound lights with Spotify and ESP8266](https://nvbn.github.io/2019/12/17/spotify-soundlights/)
+* [pywizlight](https://github.com/sbidy/pywizlight)
 
 

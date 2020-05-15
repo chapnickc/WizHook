@@ -1,9 +1,11 @@
 __pycache__
+a
 *.swp
 *.swo
-env.sh
 .cache*
 example.py
 explore.py
 test.py
 *.ipynb_checkpoints
+explore/
+env.sh.bak
