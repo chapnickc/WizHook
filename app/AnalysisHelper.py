@@ -71,25 +71,26 @@ class AnalysisHelper:
         current_bar = current(bar, t)
         current_beat = current(beat, t)
         current_tatum = current(tatum, t)
+        current_section = current(section, t)
         timbre_colors = [p for p in segment['timbre']]
         pitch_colors = [p for p in segment['pitches']]
 
         parts = {
-                #'tempo': 0.1*math.exp(tempo)*math.exp(1.2*loudness),
-                'tempo': 0.1*math.exp(tempo)*math.exp(1.6*loudness) - 0.1,
-                #'tatum': -0.01*math.log(current_tatum%1),
-                #'beat': -0.1*(current_beat - math.trunc(current_beat)),
-                #'bar': -0.02*math.log(current_bar%1),
-                'pitch': 0.075*math.exp(pitch_colors[0]),
+                'section': math.sin(current_section % 2 * math.pi/2),
+                'bar': math.sin(current_bar % 2 * math.pi/2),
+                'beat': math.sin(current_beat % 2 * math.pi/2),
+                'tatum': math.sin(current_tatum % 2 * math.pi/2),
             }
-        parts['sum'] = sum(parts.values())
+
+        parts['output'] = (parts['section']*0.6 +
+                (parts['beat'] > 0.9)*0.2 +
+                (parts['bar'] > 0.9)*0.2)
+
         return parts
 
     def get_current_colors(self, t):
         parts = self.get_color_components(t)
-        h = sum(parts.values())
-        parts['result']=h
-
+        h = parts['output']
         rgb = colorsys.hsv_to_rgb(h, 1, 1)
         p = _scale_pixel([255*p for p in rgb])
         colors = [p for _ in range(self.led_count)]

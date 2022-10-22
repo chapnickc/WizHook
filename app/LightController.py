@@ -56,8 +56,6 @@ class LightController:
                 self.lights[i].turn_on(PilotBuilder(rgb=colors[i]))
 				for i in range(len(self.lights))
 			]
-            #loop = asyncio.get_event_loop()
-            #await asyncio.gather(*ops, loop=loop)
             await asyncio.gather(*ops)
         except Exception:
             logging.exception("Something went wrong with LightController")
