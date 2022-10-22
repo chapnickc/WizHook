@@ -1,7 +1,7 @@
 
 # WizHook
 
-![](notebooks/ravel_example.png?raw=true)
+![](notebooks/ravel_ex.png?raw=true)
 
 Welcome! I'm glad you found the project. 
 
