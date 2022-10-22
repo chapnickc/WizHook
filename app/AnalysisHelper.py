@@ -38,7 +38,7 @@ def section_scale_factory(analysis, name):
              if name in section]
     min_ = min(items)
     max_ = max(items)
-    return lambda x: (x - min_) / (max_ - min_)
+    return lambda x: (x - min_) / (max_ - min_) if (max_ - min_) > 0 else -1
 
 class AnalysisHelper:
     def __init__(self, analysis, led_count=1):

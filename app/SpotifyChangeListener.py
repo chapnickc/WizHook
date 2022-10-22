@@ -14,15 +14,16 @@ from typing import Union, Dict, Any, NoReturn, AsyncIterable, List, Tuple, Calla
 
 
 class SpotifyChangeListener:
-    def __init__(self, event_queue):
+    def __init__(self, event_queue, username):
         self.queue = event_queue
         self.headers = None
         self.session = None
+        self.username = None
 
     async def get_new_token(self):
         sp = spotipy.Spotify(
                 auth_manager=spotipy.SpotifyOAuth(
-                    username=config.SPOTIFY_USERNAME,
+                    username=self.username, #config.SPOTIFY_USERNAME,
                     scope=config.SPOTIFY_SCOPE))
         token = sp.auth_manager.get_access_token(as_dict=False)
         self.headers = {'Authorization': f'Bearer {token}'}

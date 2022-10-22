@@ -45,18 +45,20 @@ async def _color_generator(leds: int, event_queue: asyncio.Queue[Event]) -> Asyn
 
 
 class LightController:
-    def __init__(self, event_queue: asyncio.Queue[Event]):
+    def __init__(self, event_queue: asyncio.Queue[Event], ip_list: list):
         self.queue = event_queue
+        self.lights = [wizlight(ip_list[i]) for i in range(len(ip_list))]
 
     async def send_to_device(self, colors: Colors) -> None:
-        if len(colors) != len(config.LED_IPS): return
+        if len(colors) != len(self.lights): return
         try:
             ops = [
-				wizlight(config.LED_IPS[i]).turn_on(PilotBuilder(rgb=colors[i]))
-				for i in range(len(config.LED_IPS))
+                self.lights[i].turn_on(PilotBuilder(rgb=colors[i]))
+				for i in range(len(self.lights))
 			]
-            loop = asyncio.get_event_loop()
-            await asyncio.gather(*ops, loop=loop)
+            #loop = asyncio.get_event_loop()
+            #await asyncio.gather(*ops, loop=loop)
+            await asyncio.gather(*ops)
         except Exception:
             logging.exception("Something went wrong with LightController")
             await asyncio.sleep(config.CONTROLLER_ERROR_DELAY)
@@ -64,7 +66,7 @@ class LightController:
     async def consume(self):
         while True:
             try:
-                async for colors in _color_generator(len(config.LED_IPS), self.queue):
+                async for colors in _color_generator(len(self.lights), self.queue):
                     print('Color[0]=', colors[0])
                     await self.send_to_device(colors)
             except Exception:
