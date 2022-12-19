@@ -38,7 +38,7 @@ This is for the authentication process.
 ### Python 3 
 
 If you're using Mac OS, it comes with Python 2.7 out of the box.
-But we want Python 3, because it's 2020 and Python 2 is no longer supported.
+But we want Python 3, because it's 2022 and Python 2 is no longer supported.
 To install Python 3, follow the instructions [here](https://docs.python-guide.org/starting/install3/osx/).
 
 ### Git
@@ -67,7 +67,7 @@ $ cd WizHook
 
 Install the dependencies
 ```sh
-$ pip install spotipy pywizlight aiohttp
+$ pip3 install spotipy pywizlight aiohttp
 ```
 
 Edit `env.sh`, with *your* account credentials
@@ -92,7 +92,7 @@ In Terminal.app
 ```sh
 $ cd WizHook
 $ . ./env.sh
-$ python main.py
+$ python3 main.py
 ```
 
 The first time you run the script you need to obtain credentials.
@@ -105,6 +105,8 @@ Profit!
 
 Your light should start changing color with the 
 active song. The default color is "International Orange".
+
+If you want you can change the default color by replacing 255, 90, 0 on line 21 with a different RGB value eg. 61, 255, 65 (Lime Green).
 
 To stop the script type Ctrl-C.
 
