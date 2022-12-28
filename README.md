@@ -106,7 +106,7 @@ Profit!
 Your light should start changing color with the 
 active song. The default color is "International Orange".
 
-If you want you can change the default color by replacing 255, 90, 0 on line 21 with a different RGB value eg. 61, 255, 65 (Lime Green).
+If you want you can change the default color, you can do so by replacing 255, 90, 0 on line 21 in app/LightController with a different RGB value eg. 61, 255, 65 (Lime Green).
 
 To stop the script type Ctrl-C.
 
