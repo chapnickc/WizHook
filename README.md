@@ -38,7 +38,7 @@ This is for the authentication process.
 ### Python 3 
 
 If you're using Mac OS, it comes with Python 2.7 out of the box.
-But we want Python 3, because it's 2022 and Python 2 is no longer supported.
+But we want Python 3, because it's 2023 and Python 2 is no longer supported.
 To install Python 3, follow the instructions [here](https://docs.python-guide.org/starting/install3/osx/).
 
 ### Git
